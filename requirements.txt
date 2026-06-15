@@ -1,7 +1,7 @@
-streamlit>=1.55.0
+streamlit
 altair>=5
 pandas
-plotly.express
+plotly
 numpy
 joblib
 scikit-learn==1.5.2
