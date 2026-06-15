@@ -4,6 +4,6 @@ pandas
 plotly.express
 numpy
 joblib
-scikit-learn
+scikit-learn==1.5.2
 category-encoders
 catboost
