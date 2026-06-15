@@ -128,7 +128,7 @@ section[data-testid="stSidebar"] * {
 
 @st.cache_data
 def load_data():
-    HBCP = pd.read_csv("cleaned_HCP.csv")
+    HBCP = pd.read_csv("hotel_bookings.csv")
 
     # Ensure target is numeric
     if HBCP["is_canceled"].dtype == object:
