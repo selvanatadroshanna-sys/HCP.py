@@ -13,7 +13,6 @@ from sklearn.model_selection import GridSearchCV,cross_validate,StratifiedKFold
 
 st.set_page_config(
     page_title="Hotel Booking Prediction",
-    page_icon="🏨",
     layout="wide"
 )
 
@@ -336,7 +335,7 @@ elif page == "Analysis":
                 .apply(lambda x: round((x == "Canceled").mean() * 100, 3))
                 .reset_index(name="Cancellation_Rate")
             )
-
+        
             fig4 = px.bar(
                 cancel_rate_deposit,
                 x="deposit_type",
@@ -345,14 +344,22 @@ elif page == "Analysis":
                 title="Deposit Type Effect on Cancellation"
             )
             st.plotly_chart(beautify_fig(fig4), use_container_width=True)
-
+        
         with col4:
-            fig_reservation = px.pie(
-                HBCP,
-                names="reservation_status",
-                title="Reservation Status Distribution"
-            )
-            st.plotly_chart(beautify_fig(fig_reservation), use_container_width=True)
+            if "reservation_status" in HBCP.columns:
+                fig_reservation = px.pie(
+                    HBCP,
+                    names="reservation_status",
+                    title="Reservation Status Distribution"
+                )
+                st.plotly_chart(
+                    beautify_fig(fig_reservation),
+                    use_container_width=True
+                )
+            else:
+                st.warning(
+                    "Column 'reservation_status' not found in the dataset."
+                )
 
     with tab2:
         col1, col2 = st.columns(2)
