@@ -3,14 +3,18 @@ import pandas as pd
 import plotly.express as px
 import numpy as np
 import joblib
+import os
 from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import RobustScaler,OneHotEncoder
 from category_encoders import BinaryEncoder
 from catboost import CatBoostClassifier
 from sklearn.model_selection import GridSearchCV,cross_validate,StratifiedKFold
+
+
 st.set_page_config(
     page_title="Hotel Booking Prediction",
+    page_icon="🏨",
     layout="wide"
 )
 
@@ -126,24 +130,43 @@ section[data-testid="stSidebar"] * {
 
 @st.cache_data
 def load_data():
-    HBCP = pd.read_csv("hotel_bookings.csv")
-    
+    data_files = ["cleaned_HCP.csv", "hotel_bookings.csv"]
 
-    if HBCP["is_canceled"].dtype == object:
-        HBCP["is_canceled"] = HBCP["is_canceled"].replace({
-            "Canceled": 1,
-            "Not Canceled": 0,
-            "1": 1,
-            "0": 0
-        })
+    for file_name in data_files:
+        if os.path.exists(file_name):
+            HBCP = pd.read_csv(file_name)
+            break
+    else:
+        st.error("Dataset file not found. Upload cleaned_HCP.csv or hotel_bookings.csv to GitHub.")
+        st.stop()
 
-    HBCP["is_canceled"] = pd.to_numeric(
-        HBCP["is_canceled"],
-        errors="coerce"
-    )
+    if "is_canceled" in HBCP.columns:
+        if HBCP["is_canceled"].dtype == object:
+            HBCP["is_canceled"] = HBCP["is_canceled"].replace({
+                "Canceled": 1,
+                "Not Canceled": 0,
+                "1": 1,
+                "0": 0
+            })
+
+        HBCP["is_canceled"] = pd.to_numeric(
+            HBCP["is_canceled"],
+            errors="coerce"
+        )
 
     return HBCP
+
+
 HBCP = load_data()
+
+PREDICTION_DROP_COLUMNS = [
+    "reservation_status",
+    "reservation_status_date",
+    "is_canceled",
+    "is_canceled_n",
+    "guest_type"
+]
+
 @st.cache_resource
 def load_model():
     return joblib.load("HBCP.pkl")
@@ -151,9 +174,72 @@ def load_model():
 model = load_model()
 
 
+def get_default_value(data, column):
+    """Return a safe default value for any feature that is not entered in the Prediction form."""
+    if column not in data.columns:
+        return 0
+
+    series = data[column]
+
+    if pd.api.types.is_numeric_dtype(series):
+        median_value = series.median()
+        if pd.isna(median_value):
+            return 0
+        return median_value
+
+    mode_value = series.dropna().mode()
+    if len(mode_value) == 0:
+        return "Unknown"
+    return mode_value.iloc[0]
+
+
+def build_prediction_input(data, model, form_values):
+    """
+    Build the exact dataframe needed by the model.
+
+    The analysis keeps all dataset columns.
+    Prediction removes:
+    reservation_status, reservation_status_date, is_canceled, is_canceled_n, guest_type
+
+    Any remaining feature that is not shown in the form, such as agent or company,
+    is filled using a default value from the dataset.
+    """
+    if hasattr(model, "feature_names_in_"):
+        prediction_columns = list(model.feature_names_in_)
+    else:
+        prediction_columns = [
+            col for col in data.columns
+            if col not in PREDICTION_DROP_COLUMNS
+        ]
+
+    removed_columns_still_in_model = [
+        col for col in PREDICTION_DROP_COLUMNS
+        if col in prediction_columns
+    ]
+
+    if removed_columns_still_in_model:
+        st.error(
+            "HBCP.pkl was trained with columns that should not be used in prediction: "
+            + ", ".join(removed_columns_still_in_model)
+        )
+        st.info(
+            "Retrain the model using train_model.py, then upload the new HBCP.pkl to GitHub."
+        )
+        st.stop()
+
+    input_row = {}
+    for column in prediction_columns:
+        if column in form_values:
+            input_row[column] = form_values[column]
+        else:
+            input_row[column] = get_default_value(data, column)
+
+    return pd.DataFrame([input_row], columns=prediction_columns)
+
+
 page = st.sidebar.radio(
     "Navigation",
-    ["Home", "Analysis", "Prediction"]
+    ["Home","Analysis","Prediction"]
 )
 
 
@@ -236,8 +322,6 @@ if page == "Home":
 
     with st.expander("View Sample Data"):
         st.dataframe(HBCP.head(), use_container_width=True)
-
-
 elif page == "Analysis":
 
     st.markdown("""
@@ -349,18 +433,12 @@ elif page == "Analysis":
             st.plotly_chart(beautify_fig(fig4), use_container_width=True)
 
         with col4:
-            if "reservation_status" in HBCP.columns:
-                fig_reservation = px.pie(
-                    HBCP,
-                    names="reservation_status",
-                    title="Reservation Status Distribution"
-                )
-                st.plotly_chart(
-                    beautify_fig(fig_reservation),
-                    use_container_width=True
-                )
-            else:
-                st.warning("Column 'reservation_status' not found in the dataset.")
+            fig_reservation = px.pie(
+                HBCP,
+                names="reservation_status",
+                title="Reservation Status Distribution"
+            )
+            st.plotly_chart(beautify_fig(fig_reservation), use_container_width=True)
 
     with tab2:
         col1, col2 = st.columns(2)
@@ -632,7 +710,6 @@ elif page == "Analysis":
     with st.expander("View Filtered Data"):
         st.dataframe(HBCP.head(100), use_container_width=True)
 
-
 elif page == "Prediction":
 
     st.markdown("""
@@ -648,19 +725,52 @@ elif page == "Prediction":
 
     with col1:
         hotel = st.selectbox("Hotel", HBCP["hotel"].unique())
-        market_segment = st.selectbox("Market Segment", HBCP["market_segment"].unique())
-        distribution_channel = st.selectbox("Distribution Channel", HBCP["distribution_channel"].unique())
+
+        market_segment = st.selectbox(
+            "Market Segment",
+            HBCP["market_segment"].unique()
+        )
+
+        distribution_channel = st.selectbox(
+            "Distribution Channel",
+            HBCP["distribution_channel"].unique()
+        )
+
         meal = st.selectbox("Meal", HBCP["meal"].unique())
-        customer_type = st.selectbox("Customer Type", HBCP["customer_type"].unique())
-        deposit_type = st.selectbox("Deposit Type", HBCP["deposit_type"].unique())
-        country = st.selectbox("Country", sorted(HBCP["country"].dropna().unique()))
-        reserved_room_type = st.selectbox("Reserved Room Type", HBCP["reserved_room_type"].unique())
-        assigned_room_type = st.selectbox("Assigned Room Type", HBCP["assigned_room_type"].unique())
+
+        customer_type = st.selectbox(
+            "Customer Type",
+            HBCP["customer_type"].unique()
+        )
+
+        deposit_type = st.selectbox(
+            "Deposit Type",
+            HBCP["deposit_type"].unique()
+        )
+
+        country = st.selectbox(
+            "Country",
+            sorted(HBCP["country"].dropna().unique())
+        )
+
+        reserved_room_type = st.selectbox(
+            "Reserved Room Type",
+            HBCP["reserved_room_type"].unique()
+        )
+
+        assigned_room_type = st.selectbox(
+            "Assigned Room Type",
+            HBCP["assigned_room_type"].unique()
+        )
 
     with col2:
-        is_repeated_guest = st.selectbox("Repeated Guest", [0, 1])
+        is_repeated_guest = st.selectbox(
+            "Repeated Guest",
+            [0, 1]
+        )
 
         arrival_date = st.date_input("Arrival Date")
+
         arrival_date_month = arrival_date.strftime("%B")
         arrival_date_year = arrival_date.year
         arrival_date_day_of_month = arrival_date.day
@@ -669,9 +779,24 @@ elif page == "Prediction":
         adults = st.number_input("Adults", min_value=0, value=2)
         children = st.number_input("Children", min_value=0, value=0)
         babies = st.number_input("Babies", min_value=0, value=0)
-        stays_in_weekend_nights = st.number_input("Stays In Weekend Nights", min_value=0, value=0)
-        stays_in_week_nights = st.number_input("Stays In Week Nights", min_value=0, value=1)
-        adr = st.number_input("Average Daily Rate", min_value=0.0, value=100.0)
+
+        stays_in_weekend_nights = st.number_input(
+            "Stays In Weekend Nights",
+            min_value=0,
+            value=0
+        )
+
+        stays_in_week_nights = st.number_input(
+            "Stays In Week Nights",
+            min_value=0,
+            value=1
+        )
+
+        adr = st.number_input(
+            "Average Daily Rate",
+            min_value=0.0,
+            value=100.0
+        )
 
     st.markdown("### More Booking Details")
 
@@ -679,68 +804,86 @@ elif page == "Prediction":
 
     with col3:
         lead_time = st.number_input("Lead Time", min_value=0, value=30)
-        previous_cancellations = st.number_input("Previous Cancellations", min_value=0, value=0)
-        previous_bookings_not_canceled = st.number_input("Previous Bookings Not Canceled", min_value=0, value=0)
-        booking_changes = st.number_input("Booking Changes", min_value=0, value=0)
+
+        previous_cancellations = st.number_input(
+            "Previous Cancellations",
+            min_value=0,
+            value=0
+        )
+
+        previous_bookings_not_canceled = st.number_input(
+            "Previous Bookings Not Canceled",
+            min_value=0,
+            value=0
+        )
+
+        booking_changes = st.number_input(
+            "Booking Changes",
+            min_value=0,
+            value=0
+        )
 
     with col4:
-        days_in_waiting_list = st.number_input("Days In Waiting List", min_value=0, value=0)
-        required_car_parking_spaces = st.number_input("Required Car Parking Spaces", min_value=0, value=0)
-        total_of_special_requests = st.number_input("Total Of Special Requests", min_value=0, value=0)
+        days_in_waiting_list = st.number_input(
+            "Days In Waiting List",
+            min_value=0,
+            value=0
+        )
+
+        required_car_parking_spaces = st.number_input(
+            "Required Car Parking Spaces",
+            min_value=0,
+            value=0
+        )
+
+        total_of_special_requests = st.number_input(
+            "Total Of Special Requests",
+            min_value=0,
+            value=0
+        )
 
     if st.button("Predict Cancellation"):
-        input_HBCP = pd.DataFrame({
-            "hotel": [hotel],
-            "lead_time": [lead_time],
-            "arrival_date_year": [arrival_date_year],
-            "arrival_date_month": [arrival_date_month],
-            "arrival_date_week_number": [arrival_date_week_number],
-            "arrival_date_day_of_month": [arrival_date_day_of_month],
-            "stays_in_weekend_nights": [stays_in_weekend_nights],
-            "stays_in_week_nights": [stays_in_week_nights],
-            "adults": [adults],
-            "children": [children],
-            "babies": [babies],
-            "meal": [meal],
-            "country": [country],
-            "market_segment": [market_segment],
-            "distribution_channel": [distribution_channel],
-            "is_repeated_guest": [is_repeated_guest],
-            "previous_cancellations": [previous_cancellations],
-            "previous_bookings_not_canceled": [previous_bookings_not_canceled],
-            "reserved_room_type": [reserved_room_type],
-            "assigned_room_type": [assigned_room_type],
-            "booking_changes": [booking_changes],
-            "deposit_type": [deposit_type],
-            "days_in_waiting_list": [days_in_waiting_list],
-            "customer_type": [customer_type],
-            "adr": [adr],
-            "required_car_parking_spaces": [required_car_parking_spaces],
-            "total_of_special_requests": [total_of_special_requests]
-        })
+        form_values = {
+            "hotel": hotel,
+            "lead_time": lead_time,
+            "arrival_date_year": arrival_date_year,
+            "arrival_date_month": arrival_date_month,
+            "arrival_date_week_number": arrival_date_week_number,
+            "arrival_date_day_of_month": arrival_date_day_of_month,
+            "stays_in_weekend_nights": stays_in_weekend_nights,
+            "stays_in_week_nights": stays_in_week_nights,
+            "adults": adults,
+            "children": children,
+            "babies": babies,
+            "meal": meal,
+            "country": country,
+            "market_segment": market_segment,
+            "distribution_channel": distribution_channel,
+            "is_repeated_guest": is_repeated_guest,
+            "previous_cancellations": previous_cancellations,
+            "previous_bookings_not_canceled": previous_bookings_not_canceled,
+            "reserved_room_type": reserved_room_type,
+            "assigned_room_type": assigned_room_type,
+            "booking_changes": booking_changes,
+            "deposit_type": deposit_type,
+            "days_in_waiting_list": days_in_waiting_list,
+            "customer_type": customer_type,
+            "adr": adr,
+            "required_car_parking_spaces": required_car_parking_spaces,
+            "total_of_special_requests": total_of_special_requests
+        }
 
-        input_HBCP = input_HBCP.drop(
-            columns=[
-                "reservation_status",
-                "reservation_status_date",
-                "is_canceled",
-                "is_canceled_n",
-                "guest_type"
-            ],
-            errors="ignore"
-        )
+        input_HBCP = build_prediction_input(HBCP, model, form_values)
 
         st.subheader("Input Data")
         st.dataframe(input_HBCP, use_container_width=True)
 
-       
         prediction = model.predict(input_HBCP)[0]
 
         if prediction == 1:
             st.error("Booking Will Be Canceled")
         else:
             st.success("Booking Will Not Be Canceled")
-
 
 # if st.button('predict Is Canceled'):
 #     new_data=pd.DataFrame(columns=HBCP.columns.drop('is_canceled','reservation_status_date','reservation_status'),data=[[model,year,transmission,mileage,fueltype,tax,mpg,enginesize]])
