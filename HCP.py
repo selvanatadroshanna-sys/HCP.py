@@ -129,9 +129,14 @@ section[data-testid="stSidebar"] * {
 
 @st.cache_data
 def load_data():
-    HBCP= pd.read_csv("cleaned_HCP.csv")
+    HBCP = pd.read_csv("cleaned_HCP.csv")
+    HBCP["is_canceled"] = pd.to_numeric(HBCP["is_canceled"], errors="coerce")
     return HBCP
 
+HBCP["is_canceled"] = HBCP["is_canceled"].map({
+    "Not Canceled": 0,
+    "Canceled": 1
+})
 
 HBCP = load_data()
 
