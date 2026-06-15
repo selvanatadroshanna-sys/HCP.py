@@ -127,6 +127,7 @@ section[data-testid="stSidebar"] * {
 @st.cache_data
 def load_data():
     HBCP = pd.read_csv("hotel_bookings.csv")
+    
 
     if HBCP["is_canceled"].dtype == object:
         HBCP["is_canceled"] = HBCP["is_canceled"].replace({
@@ -142,9 +143,13 @@ def load_data():
     )
 
     return HBCP
-
-
 HBCP = load_data()
+@st.cache_resource
+def load_model():
+    return joblib.load("HBCP.pkl")
+
+model = load_model()
+
 
 page = st.sidebar.radio(
     "Navigation",
@@ -728,7 +733,7 @@ elif page == "Prediction":
         st.subheader("Input Data")
         st.dataframe(input_HBCP, use_container_width=True)
 
-        model = joblib.load("HBCP.pkl")
+       
         prediction = model.predict(input_HBCP)[0]
 
         if prediction == 1:
