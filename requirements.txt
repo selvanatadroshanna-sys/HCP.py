@@ -7,3 +7,4 @@ joblib
 scikit-learn
 category-encoders
 catboost
+python-3.11
