@@ -130,15 +130,26 @@ section[data-testid="stSidebar"] * {
 @st.cache_data
 def load_data():
     HBCP = pd.read_csv("cleaned_HCP.csv")
-    HBCP["is_canceled"] = pd.to_numeric(HBCP["is_canceled"], errors="coerce")
+
+    # Ensure target is numeric
+    if HBCP["is_canceled"].dtype == object:
+        HBCP["is_canceled"] = HBCP["is_canceled"].replace({
+            "Canceled": 1,
+            "Not Canceled": 0,
+            "1": 1,
+            "0": 0
+        })
+
+    HBCP["is_canceled"] = pd.to_numeric(
+        HBCP["is_canceled"],
+        errors="coerce"
+    )
+
     return HBCP
 
-HBCP["is_canceled"] = HBCP["is_canceled"].map({
-    "Not Canceled": 0,
-    "Canceled": 1
-})
 
 HBCP = load_data()
+
 
 page = st.sidebar.radio(
     "Navigation",
