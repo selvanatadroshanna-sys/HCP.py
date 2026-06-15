@@ -735,7 +735,6 @@ elif page == "Prediction":
             st.error("Booking Will Be Canceled")
         else:
             st.success("Booking Will Not Be Canceled")
-```
 
 
 # if st.button('predict Is Canceled'):
