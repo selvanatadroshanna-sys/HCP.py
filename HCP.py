@@ -729,13 +729,16 @@ elif page == "Prediction":
                 if col not in input_HBCP.columns:
                     if col in HBCP.columns:
                         if pd.api.types.is_numeric_dtype(HBCP[col]):
-                            input_HBCP[col] = HBCP[col].median()
+                            input_HBCP[col] = int(HBCP[col].dropna().mode()[0])
                         else:
                             input_HBCP[col] = HBCP[col].mode()[0]
                     else:
                         input_HBCP[col] = 0
 
             input_HBCP = input_HBCP[model_columns]
+            for col in input_HBCP.columns:
+                if col in HBCP.columns and pd.api.types.is_integer_dtype(HBCP[col]):
+                    input_HBCP[col] = input_HBCP[col].astype("int64")
 
         try:
             prediction = model.predict(input_HBCP)[0]
