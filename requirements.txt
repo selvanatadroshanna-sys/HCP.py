@@ -1,9 +1,8 @@
-streamlit
-altair>=5.0.0
-pandas
-plotly
-numpy
-joblib
-scikit-learn==1.5.2
 category-encoders
 catboost
+scikit-learn==1.6.1
+joblib
+pandas
+numpy
+plotly
+streamlit
