@@ -9,6 +9,7 @@ from sklearn.preprocessing import RobustScaler,OneHotEncoder
 from category_encoders import BinaryEncoder
 from catboost import CatBoostClassifier
 from sklearn.model_selection import GridSearchCV,cross_validate,StratifiedKFold
+from datetime import date
 st.set_page_config(
     page_title="Hotel Booking Prediction",
     layout="wide"
@@ -659,25 +660,20 @@ elif page == "Prediction":
 
     with col2:
         is_repeated_guest = st.selectbox("Repeated Guest", [0, 1])
-        arrival_date_year = st.selectbox(
-            "Arrival Year",
-            sorted(HBCP["arrival_date_year"].unique())
+        min_year = int(HBCP["arrival_date_year"].min())
+        max_year = int(HBCP["arrival_date_year"].max())
+        
+        arrival_date = st.date_input(
+            "Arrival Date",
+            value=date(min_year, 1, 1),
+            min_value=date(min_year, 1, 1),
+            max_value=date(max_year, 12, 31)
         )
         
-        arrival_date_month = st.selectbox(
-            "Arrival Month",
-            HBCP["arrival_date_month"].dropna().unique()
-        )
-        
-        arrival_date_week_number = st.selectbox(
-            "Arrival Week Number",
-            sorted(HBCP["arrival_date_week_number"].unique())
-        )
-        
-        arrival_date_day_of_month = st.selectbox(
-            "Arrival Day",
-            sorted(HBCP["arrival_date_day_of_month"].unique())
-        )
+        arrival_date_month = arrival_date.strftime("%B")
+        arrival_date_year = arrival_date.year
+        arrival_date_day_of_month = arrival_date.day
+        arrival_date_week_number = arrival_date.isocalendar()[1]
 
         adults = st.number_input("Adults", min_value=0, value=2)
         children = st.number_input("Children", min_value=0, value=0)
