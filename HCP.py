@@ -722,10 +722,10 @@ elif page == "Prediction":
         })
     
         st.dataframe(input_HBCP, use_container_width=True)
-
+        
         if hasattr(model, "feature_names_in_"):
             model_columns = list(model.feature_names_in_)
-
+        
             for col in model_columns:
                 if col not in input_HBCP.columns:
                     if col in HBCP.columns:
@@ -735,15 +735,10 @@ elif page == "Prediction":
                             input_HBCP[col] = HBCP[col].mode()[0]
                     else:
                         input_HBCP[col] = 0
-
+        
             input_HBCP = input_HBCP[model_columns]
-
+        
         prediction = model.predict(input_HBCP)[0]
-
-        if prediction == 1:
-            st.error("Booking Will Be Canceled")
-        else:
-            st.success("Booking Will Not Be Canceled")
 # if st.button('predict Is Canceled'):
 #     new_data=pd.DataFrame(columns=HBCP.columns.drop('is_canceled','reservation_status_date','reservation_status'),data=[[model,year,transmission,mileage,fueltype,tax,mpg,enginesize]])
 #     st.write('predicted price:',model.predict(new_data).round(2)[0])
