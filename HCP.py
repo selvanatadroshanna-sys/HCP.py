@@ -741,6 +741,8 @@ elif page == "Prediction":
                     input_HBCP[col] = input_HBCP[col].astype("int64")
 
         try:
+            int_cols = input_HBCP.select_dtypes('integer').columns
+            input_HBCP[int_cols] = input_HBCP[int_cols].astype('float64')
             prediction = model.predict(input_HBCP)[0]
 
             if prediction == 1:
