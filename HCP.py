@@ -716,7 +716,9 @@ elif page == "Prediction":
             "customer_type": [customer_type],
             "adr": [adr],
             "required_car_parking_spaces": [required_car_parking_spaces],
-            "total_of_special_requests": [total_of_special_requests]
+            "total_of_special_requests": [total_of_special_requests],
+            "agent": [0],
+            "company": [0]
         })
     
         st.dataframe(input_HBCP, use_container_width=True)
