@@ -718,33 +718,20 @@ elif page == "Prediction":
             "required_car_parking_spaces": [required_car_parking_spaces],
             "total_of_special_requests": [total_of_special_requests]
         })
-
-        input_HBCP = input_HBCP.drop(
-            columns=[
-                "reservation_status",
-                "reservation_status_date",
-                "is_canceled",
-                "is_canceled_n",
-                "guest_type"
-            ],
-            errors="ignore"
-        )
-
-
-         st.dataframe(input_HBCP, use_container_width=True)
-        
+    
+        st.dataframe(input_HBCP, use_container_width=True)
+    
         if hasattr(model, "feature_names_in_"):
             input_HBCP = input_HBCP.reindex(
                 columns=model.feature_names_in_
             )
-        
+    
         prediction = model.predict(input_HBCP)[0]
-        
+    
         if prediction == 1:
             st.error("Booking Will Be Canceled")
         else:
             st.success("Booking Will Not Be Canceled")
-
 # if st.button('predict Is Canceled'):
 #     new_data=pd.DataFrame(columns=HBCP.columns.drop('is_canceled','reservation_status_date','reservation_status'),data=[[model,year,transmission,mileage,fueltype,tax,mpg,enginesize]])
 #     st.write('predicted price:',model.predict(new_data).round(2)[0])
