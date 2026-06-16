@@ -659,12 +659,25 @@ elif page == "Prediction":
 
     with col2:
         is_repeated_guest = st.selectbox("Repeated Guest", [0, 1])
-
-        arrival_date = st.date_input("Arrival Date")
-        arrival_date_month = arrival_date.strftime("%B")
-        arrival_date_year = arrival_date.year
-        arrival_date_day_of_month = arrival_date.day
-        arrival_date_week_number = arrival_date.isocalendar()[1]
+        arrival_date_year = st.selectbox(
+            "Arrival Year",
+            sorted(HBCP["arrival_date_year"].unique())
+        )
+        
+        arrival_date_month = st.selectbox(
+            "Arrival Month",
+            HBCP["arrival_date_month"].dropna().unique()
+        )
+        
+        arrival_date_week_number = st.selectbox(
+            "Arrival Week Number",
+            sorted(HBCP["arrival_date_week_number"].unique())
+        )
+        
+        arrival_date_day_of_month = st.selectbox(
+            "Arrival Day",
+            sorted(HBCP["arrival_date_day_of_month"].unique())
+        )
 
         adults = st.number_input("Adults", min_value=0, value=2)
         children = st.number_input("Children", min_value=0, value=0)
