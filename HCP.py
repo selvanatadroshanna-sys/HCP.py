@@ -11,11 +11,13 @@ from catboost import CatBoostClassifier
 from sklearn.model_selection import GridSearchCV,cross_validate,StratifiedKFold
 from datetime import date
 from groq import Groq
+from streamlit_float import *
 st.set_page_config(
     page_title="Hotel Booking Prediction",
     layout="wide"
 )
 
+float_init()
 st.markdown("""
 <style>
 .stApp {
@@ -152,7 +154,7 @@ def load_model():
 
 model = load_model()
 
-with open("Project_summary_HCP.md", "r", encoding="utf-8") as f:
+with open("project_summary.md", "r", encoding="utf-8") as f:
     SUMMARY = f.read()
 
 SYSTEM_PROMPT = f"""
@@ -199,9 +201,8 @@ page = st.sidebar.radio(
     ["Home", "Analysis", "Prediction"]
 )
 
-main_col, chat_col = st.columns([4, 1])
-with main_col:
-    if page == "Home":
+main_col = st.container()
+if page == "Home":
         st.markdown("""
         <div class="hero">
             <div class="hero-content">
@@ -280,7 +281,7 @@ with main_col:
         with st.expander("View Sample Data"):
             st.dataframe(HBCP.head(), use_container_width=True)
 
-    elif page == "Analysis":
+elif page == "Analysis":
 
         st.markdown("""
         <div class="custom-card">
@@ -674,7 +675,7 @@ with main_col:
         with st.expander("View Filtered Data"):
             st.dataframe(HBCP.head(100), use_container_width=True)
 
-    elif page == "Prediction":
+elif page == "Prediction":
 
         st.markdown("""
         <div class="custom-card">
@@ -806,69 +807,147 @@ with main_col:
                 st.write(input_HBCP.columns.tolist())
                 st.write("Input dtypes:")
                 st.write(input_HBCP.dtypes)
-with chat_col:
 
+
+st.markdown("""
+<style>
+.floating-chat {
+    position: fixed;
+    right: 28px;
+    bottom: 28px;
+    width: 360px;
+    height: 560px;
+    background: #ffffff;
+    border-radius: 24px;
+    box-shadow: 0 18px 50px rgba(15, 23, 42, 0.25);
+    border: 1px solid #e5e7eb;
+    z-index: 9999;
+    padding: 18px;
+}
+
+.chat-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 800;
+    font-size: 18px;
+    color: #111827;
+    margin-bottom: 14px;
+}
+
+.chat-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ef4444, #9333ea);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.chat-welcome {
+    background: #f3f4f6;
+    padding: 14px;
+    border-radius: 18px;
+    font-size: 14px;
+    color: #374151;
+    line-height: 1.5;
+    margin-bottom: 12px;
+}
+
+.chat-input-box input {
+    border-radius: 18px !important;
+}
+
+div[data-testid="stChatMessage"] {
+    background: #f9fafb;
+    border-radius: 16px;
+    padding: 8px;
+    margin-bottom: 8px;
+}
+</style>
+""", unsafe_allow_html=True)
+
+st.markdown("""
+<style>
+[data-testid="stChatMessage"] {
+    background: #f9fafb;
+    border-radius: 15px;
+    padding: 8px;
+    margin-bottom: 8px;
+}
+</style>
+""", unsafe_allow_html=True)
+
+chat_container = st.container()
+
+with chat_container:
     st.markdown("### Hotel Assistant")
 
     if "api_key" not in st.session_state:
         st.session_state.api_key = ""
 
-    if not st.session_state.api_key:
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
 
+    if not st.session_state.api_key:
         key = st.text_input(
             "Enter Groq API Key",
-            type="password"
+            type="password",
+            key="groq_api_key_input"
         )
 
-        if st.button("Connect"):
-            st.session_state.api_key = key
-            st.rerun()
+        if st.button("Connect", key="connect_groq"):
+            if key:
+                st.session_state.api_key = key
+                st.rerun()
+            else:
+                st.warning("Please enter your Groq API key.")
 
     else:
-
         client = Groq(api_key=st.session_state.api_key)
 
-        if "messages" not in st.session_state:
-            st.session_state.messages = []
-
-        for msg in st.session_state.messages:
+        for msg in st.session_state.messages[-4:]:
             with st.chat_message(msg["role"]):
                 st.write(msg["content"])
 
-        prompt = st.chat_input(
-            "Ask about hotel bookings..."
-        )
+        prompt = st.chat_input("Ask about hotel bookings...")
 
         if prompt:
-
-            st.session_state.messages.append(
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            )
+            st.session_state.messages.append({
+                "role": "user",
+                "content": prompt
+            })
 
             response = client.chat.completions.create(
                 model="llama-3.1-8b-instant",
                 messages=[
-                    {
-                        "role": "system",
-                        "content": SYSTEM_PROMPT
-                    }
+                    {"role": "system", "content": SYSTEM_PROMPT}
                 ] + st.session_state.messages,
                 temperature=0.2
             )
 
             answer = response.choices[0].message.content
 
-            st.session_state.messages.append(
-                {
-                    "role": "assistant",
-                    "content": answer
-                }
-            )
+            st.session_state.messages.append({
+                "role": "assistant",
+                "content": answer
+            })
 
             st.rerun()
+
+    chat_container.float("""
+        bottom: 20px;
+        right: 20px;
+        width: 380px;
+        max-height: 650px;
+        background-color: white;
+        border-radius: 20px;
+        padding: 15px;
+        box-shadow: 0px 8px 25px rgba(0,0,0,0.15);
+        z-index: 9999;
+    """)
 # if st.button('predict Is Canceled'):
 #     new_data=pd.DataFrame(columns=HBCP.columns.drop('is_canceled','reservation_status_date','reservation_status'),data=[[model,year,transmission,mileage,fueltype,tax,mpg,enginesize]])
 #     st.write('predicted price:',model.predict(new_data).round(2)[0])
