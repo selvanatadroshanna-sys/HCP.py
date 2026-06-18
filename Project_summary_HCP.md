@@ -2,7 +2,7 @@
 
 ## Purpose
 
-The Hotel Booking Management Assistant is an AI-powered business assistant designed to help hotel managers analyze booking performance, understand customer behavior, identify cancellation risks, and support operational decision-making.
+Hotel Booking Analytics & Prediction is an AI-powered business assistant designed to help hotel managers analyze booking performance, understand customer behavior, identify cancellation risks, and support operational decision-making.
 
 The assistant combines booking analytics, cancellation prediction, and business intelligence into a single conversational interface.
 
