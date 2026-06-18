@@ -897,9 +897,9 @@ with floating_btn:
         st.rerun()
 
 floating_btn.float("""
-    bottom: 20px;
-    right: 20px;
-    width: 70px;
+    bottom: 40px;
+    right: 40px;
+    width: 90px;
     z-index: 99999;
 """)
 
