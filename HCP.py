@@ -197,7 +197,6 @@ if page == "Home":
         st.markdown("""
         <div class="hero">
             <div class="hero-content">
-
                 <h1>Hotel Booking Analytics & Prediction</h1>
                 <p>
                     Smart hotel booking analysis and cancellation prediction powered by machine learning.
@@ -207,7 +206,6 @@ if page == "Home":
             </div>
         </div>
         """, unsafe_allow_html=True)
-
         st.markdown("""
         <div class="custom-card">
             <div class="card-title">Project Description</div>
