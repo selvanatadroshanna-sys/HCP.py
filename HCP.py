@@ -74,15 +74,6 @@ section[data-testid="stSidebar"] * {
     color: #e5e7eb;
 }
 
-.badge {
-    background: rgba(255,255,255,0.18);
-    padding: 10px 18px;
-    border-radius: 30px;
-    width: fit-content;
-    margin-bottom: 18px;
-    font-weight: 600;
-}
-
 .custom-card {
     background: rgba(255,255,255,0.95);
     padding: 24px;
@@ -206,7 +197,7 @@ if page == "Home":
         st.markdown("""
         <div class="hero">
             <div class="hero-content">
-                <div class="badge">Machine Learning Project</div>
+
                 <h1>Hotel Booking Analytics & Prediction</h1>
                 <p>
                     Smart hotel booking analysis and cancellation prediction powered by machine learning.
