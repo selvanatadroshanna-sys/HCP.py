@@ -313,7 +313,7 @@ elif page == "Analysis":
     
         HBCP = HBCP[
             (HBCP["arrival_date_year"].between(year_filter[0], year_filter[1])) &
-            (HBCP["hotel"].isin(hotel_filter))&(HBCP["market_segment"].isin(market_segment_filter))
+            (HBCP["hotel"].isin(hotel_filter))&(HBCP["market_segment"] == market_segment_filter)
         ]
     
 
