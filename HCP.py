@@ -892,7 +892,7 @@ if "messages" not in st.session_state:
 floating_btn = st.container()
 
 with floating_btn:
-    if st.button("💬", key="open_chat"):
+    if st.button("Hotel Assistant", key="open_chat"):
         st.session_state.chat_open = not st.session_state.chat_open
         st.rerun()
 
