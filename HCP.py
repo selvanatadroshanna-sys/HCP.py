@@ -152,7 +152,7 @@ def load_model():
 
 model = load_model()
 
-with open("project_summary.md", "r", encoding="utf-8") as f:
+with open("Project_summary_HCP.md", "r", encoding="utf-8") as f:
     SUMMARY = f.read()
 
 SYSTEM_PROMPT = f"""
