@@ -807,36 +807,47 @@ with main_col:
                 st.write("Input dtypes:")
                 st.write(input_HBCP.dtypes)
 with chat_col:
+
     st.markdown("### Hotel Assistant")
-    api_key = st.text_input(
-        "Groq API Key",
-        type="password",
-        key="groq_key"
-    )
-    
-    if "messages" not in st.session_state:
-        st.session_state.messages = []
-    
-    if api_key:
-    
-        client = Groq(api_key=api_key)
-    
-        chat_container = st.container(height=500)
-    
-        with chat_container:
-            for msg in st.session_state.messages:
-                with st.chat_message(msg["role"]):
-                    st.write(msg["content"])
-    
-        user_prompt = st.chat_input("Ask me anything")
-    
-        if user_prompt:
-    
-            st.session_state.messages.append({
-                "role": "user",
-                "content": user_prompt
-            })
-    
+
+    if "api_key" not in st.session_state:
+        st.session_state.api_key = ""
+
+    if not st.session_state.api_key:
+
+        key = st.text_input(
+            "Enter Groq API Key",
+            type="password"
+        )
+
+        if st.button("Connect"):
+            st.session_state.api_key = key
+            st.rerun()
+
+    else:
+
+        client = Groq(api_key=st.session_state.api_key)
+
+        if "messages" not in st.session_state:
+            st.session_state.messages = []
+
+        for msg in st.session_state.messages:
+            with st.chat_message(msg["role"]):
+                st.write(msg["content"])
+
+        prompt = st.chat_input(
+            "Ask about hotel bookings..."
+        )
+
+        if prompt:
+
+            st.session_state.messages.append(
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            )
+
             response = client.chat.completions.create(
                 model="llama-3.1-8b-instant",
                 messages=[
@@ -847,14 +858,16 @@ with chat_col:
                 ] + st.session_state.messages,
                 temperature=0.2
             )
-    
+
             answer = response.choices[0].message.content
-    
-            st.session_state.messages.append({
-                "role": "assistant",
-                "content": answer
-            })
-    
+
+            st.session_state.messages.append(
+                {
+                    "role": "assistant",
+                    "content": answer
+                }
+            )
+
             st.rerun()
 # if st.button('predict Is Canceled'):
 #     new_data=pd.DataFrame(columns=HBCP.columns.drop('is_canceled','reservation_status_date','reservation_status'),data=[[model,year,transmission,mileage,fueltype,tax,mpg,enginesize]])
