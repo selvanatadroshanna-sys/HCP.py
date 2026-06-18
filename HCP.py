@@ -871,12 +871,6 @@ div[data-testid="stChatMessage"] {
 
 st.markdown("""
 <style>
-.chat-scroll-box {
-    max-height: 420px;
-    overflow-y: auto;
-    padding-right: 8px;
-}
-
 [data-testid="stChatMessage"] {
     background: #f9fafb;
     border-radius: 15px;
@@ -886,77 +880,103 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-chat_container = st.container()
+if "chat_open" not in st.session_state:
+    st.session_state.chat_open = False
 
-with chat_container:
-    st.markdown("### Hotel Assistant")
+if "api_key" not in st.session_state:
+    st.session_state.api_key = ""
 
-    if "api_key" not in st.session_state:
-        st.session_state.api_key = ""
+if "messages" not in st.session_state:
+    st.session_state.messages = []
 
-    if "messages" not in st.session_state:
-        st.session_state.messages = []
+floating_btn = st.container()
 
-    if not st.session_state.api_key:
-        key = st.text_input(
-            "Enter Groq API Key",
-            type="password",
-            key="groq_api_key_input"
-        )
+with floating_btn:
+    if st.button("💬", key="open_chat"):
+        st.session_state.chat_open = not st.session_state.chat_open
+        st.rerun()
 
-        if st.button("Connect", key="connect_groq"):
-            if key:
-                st.session_state.api_key = key
+floating_btn.float("""
+    bottom: 20px;
+    right: 20px;
+    width: 70px;
+    z-index: 99999;
+""")
+
+if st.session_state.chat_open:
+    chat_container = st.container()
+
+    with chat_container:
+        header_col, close_col = st.columns([8, 1])
+
+        with header_col:
+            st.markdown("### Hotel Assistant")
+
+        with close_col:
+            if st.button("✖", key="close_chat"):
+                st.session_state.chat_open = False
                 st.rerun()
-            else:
-                st.warning("Please enter your Groq API key.")
 
-    else:
-        client = Groq(api_key=st.session_state.api_key)
-        
-        messages_box = st.container(height=420)
-
-        with messages_box:
-
-            for msg in st.session_state.messages[-4:]:
-                with st.chat_message(msg["role"]):
-                    st.write(msg["content"])
-
-        prompt = st.chat_input("Ask about hotel bookings...")
-
-        if prompt:
-            st.session_state.messages.append({
-                "role": "user",
-                "content": prompt
-            })
-
-            response = client.chat.completions.create(
-                model="llama-3.1-8b-instant",
-                messages=[
-                    {"role": "system", "content": SYSTEM_PROMPT}
-                ] + st.session_state.messages,
-                temperature=0.2
+        if not st.session_state.api_key:
+            key = st.text_input(
+                "Enter Groq API Key",
+                type="password",
+                key="groq_api_key_input"
             )
 
-            answer = response.choices[0].message.content
+            if st.button("Connect", key="connect_groq"):
+                if key:
+                    st.session_state.api_key = key
+                    st.rerun()
+                else:
+                    st.warning("Please enter your Groq API key.")
 
-            st.session_state.messages.append({
-                "role": "assistant",
-                "content": answer
-            })
+        else:
+            client = Groq(api_key=st.session_state.api_key)
 
-            st.rerun()
+            messages_box = st.container(height=420)
+
+            with messages_box:
+                for msg in st.session_state.messages:
+                    with st.chat_message(msg["role"]):
+                        st.write(msg["content"])
+
+            prompt = st.chat_input("Ask about hotel bookings...")
+
+            if prompt:
+                st.session_state.messages.append({
+                    "role": "user",
+                    "content": prompt
+                })
+
+                response = client.chat.completions.create(
+                    model="llama-3.1-8b-instant",
+                    messages=[
+                        {"role": "system", "content": SYSTEM_PROMPT}
+                    ] + st.session_state.messages,
+                    temperature=0.2
+                )
+
+                answer = response.choices[0].message.content
+
+                st.session_state.messages.append({
+                    "role": "assistant",
+                    "content": answer
+                })
+
+                st.rerun()
 
     chat_container.float("""
-        bottom: 20px;
+        bottom: 100px;
         right: 20px;
-        width: 380px;
-        max-height: 650px;
-        background-color: white;
+        width: 400px;
+        height: 650px;
+        background: white;
         border-radius: 20px;
         padding: 15px;
         box-shadow: 0px 8px 25px rgba(0,0,0,0.15);
         z-index: 9999;
+        overflow-y: auto;
     """)
 # if st.button('predict Is Canceled'):
 #     new_data=pd.DataFrame(columns=HBCP.columns.drop('is_canceled','reservation_status_date','reservation_status'),data=[[model,year,transmission,mileage,fueltype,tax,mpg,enginesize]])
