@@ -1,4 +1,4 @@
-# Hotel Booking Management Assistant
+# Hotel Booking Analytics & Prediction
 
 ## Purpose
 
