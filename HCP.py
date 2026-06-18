@@ -871,6 +871,12 @@ div[data-testid="stChatMessage"] {
 
 st.markdown("""
 <style>
+.chat-scroll-box {
+    max-height: 420px;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
 [data-testid="stChatMessage"] {
     background: #f9fafb;
     border-radius: 15px;
@@ -907,10 +913,14 @@ with chat_container:
 
     else:
         client = Groq(api_key=st.session_state.api_key)
+        
+        messages_box = st.container(height=420)
 
-        for msg in st.session_state.messages[-4:]:
-            with st.chat_message(msg["role"]):
-                st.write(msg["content"])
+        with messages_box:
+
+            for msg in st.session_state.messages[-4:]:
+                with st.chat_message(msg["role"]):
+                    st.write(msg["content"])
 
         prompt = st.chat_input("Ask about hotel bookings...")
 
