@@ -306,11 +306,18 @@ elif page == "Analysis":
             options=HBCP["hotel"].unique(),
             default=HBCP["hotel"].unique()
         )
+        market_segment_filter = st.sidebar.selectbox(
+            "Hotel",
+            options=HBCP["market_segment"].unique(),
+            default=HBCP["market_segment"].unique()
+        )
+    
 
         HBCP = HBCP[
             (HBCP["arrival_date_year"].between(year_filter[0], year_filter[1])) &
-            (HBCP["hotel"].isin(hotel_filter))
+            (HBCP["hotel"].isin(hotel_filter))&(HBCP["market_segment"].isin(market_segment_filter))
         ]
+    
 
         def beautify_fig(fig):
             fig.update_layout(
