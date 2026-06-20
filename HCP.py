@@ -261,6 +261,7 @@ if page == "Home":
         </div>
     </div>
     """, unsafe_allow_html=True)
+
     st.markdown("""
     <style>
     div[data-testid="stHorizontalBlock"]{
@@ -273,15 +274,15 @@ if page == "Home":
     </style>
     """, unsafe_allow_html=True)
 
-   left_btn, center_space, right_btn = st.columns([4, 2, 4])
+    left_btn, center_space, right_btn = st.columns([4, 2, 4])
 
     with left_btn:
-        if st.button("Analysis Page"):
+        if st.button("Analysis Page", use_container_width=True):
             st.session_state.page = "Analysis"
             st.rerun()
 
     with right_btn:
-        if st.button("Prediction Page"):
+        if st.button("Prediction Page", use_container_width=True):
             st.session_state.page = "Prediction"
             st.rerun()
 
