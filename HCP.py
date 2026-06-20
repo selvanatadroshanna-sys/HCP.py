@@ -132,27 +132,33 @@ st.markdown("""
 }
 div.stButton > button {
     width: 80%;
-    height: 120px;
+    height: 130px;
 
-    border-radius: 24px;
+    border-radius: 28px;
 
-    font-size: 45px;
-    font-weight: 800;
+    font-size: 42px;      /* أكبر */
+    font-weight: 900;
 
-    border: 1px solid rgba(255,255,255,0.45);
-    background: rgba(255,255,255,0.18);
+    border: 1.5px solid rgba(255,255,255,0.35);
+
+    background: rgba(255,255,255,0.12);
 
     color: white;
 
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
 
-    box-shadow: 0 12px 35px rgba(0,0,0,0.25);
+    box-shadow:
+        0 15px 40px rgba(0,0,0,0.35),
+        inset 0 1px 1px rgba(255,255,255,0.25);
+
+    text-shadow: 0 2px 8px rgba(0,0,0,0.4);
 }
 div.stButton > button:hover {
-    background: rgba(255,255,255,0.25);
+    background: rgba(255,255,255,0.22);
+    backdrop-filter: blur(40px);
     transform: translateY(-4px);
-    transition: 0.3s;
+    transition: all 0.3s ease;
 }
 </style>
 """, unsafe_allow_html=True)
