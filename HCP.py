@@ -136,7 +136,7 @@ div.stButton > button {
 
     border-radius: 24px;
 
-    font-size: 40px;
+    font-size: 45px;
     font-weight: 800;
 
     border: 1px solid rgba(255,255,255,0.45);
