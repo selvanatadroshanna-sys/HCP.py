@@ -136,7 +136,7 @@ div.stButton > button {
 
     border-radius: 24px;
 
-    font-size: 30px;
+    font-size: 37px;
     font-weight: 800;
 
     border: 1px solid rgba(255,255,255,0.45);
@@ -265,7 +265,7 @@ if page == "Home":
     st.markdown("""
     <style>
     div[data-testid="stHorizontalBlock"]{
-        margin-top:-140px;
+        margin-top:-260px;
         padding-left:80px;
         padding-right:80px;
         position:relative;
