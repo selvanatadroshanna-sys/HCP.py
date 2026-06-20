@@ -132,15 +132,22 @@ st.markdown("""
 }
 div.stButton > button {
     width: 100%;
-    height: 130px;
-    border-radius: 28px;
-    font-size: 26px;
+    height: 140px;
+
+    border-radius: 25px;
+
+    font-size: 32px;
     font-weight: 800;
-    border: 1px solid rgba(255,255,255,0.45);
+
+    border: 1px solid rgba(255,255,255,0.4);
     background: rgba(255,255,255,0.18);
+
     color: white;
-    backdrop-filter: blur(16px);
-    box-shadow: 0 14px 40px rgba(0,0,0,0.30);
+
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+
+    box-shadow: 0 10px 30px rgba(0,0,0,.25);
 }
 div.stButton > button:hover {
     background: rgba(255,255,255,0.25);
@@ -257,16 +264,16 @@ if page == "Home":
     st.markdown("""
     <style>
     div[data-testid="stHorizontalBlock"]{
-        margin-top:-250px;
-        padding-left:60px;
-        padding-right:60px;
+        margin-top:-170px;
+        padding-left:120px;
+        padding-right:120px;
         position:relative;
         z-index:999;
     }
     </style>
     """, unsafe_allow_html=True)
 
-    nav1, gap, nav2 = st.columns([2, 1, 2])
+    left, nav1, nav2, right = st.columns([1,4,4,1])
 
     with nav1:
         if st.button("Analysis Page"):
