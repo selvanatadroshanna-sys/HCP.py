@@ -131,12 +131,12 @@ st.markdown("""
     }
 }
 div.stButton > button {
-    width: 100%;
+    width: 80%;
     height: 120px;
 
     border-radius: 24px;
 
-    font-size: 37px;
+    font-size: 40px;
     font-weight: 800;
 
     border: 1px solid rgba(255,255,255,0.45);
@@ -265,7 +265,7 @@ if page == "Home":
     st.markdown("""
     <style>
     div[data-testid="stHorizontalBlock"]{
-        margin-top:-260px;
+        margin-top:-240px;
         padding-left:80px;
         padding-right:80px;
         position:relative;
@@ -274,7 +274,7 @@ if page == "Home":
     </style>
     """, unsafe_allow_html=True)
 
-    left_btn, center_space, right_btn = st.columns([4, 2, 4])
+    left_btn, center_space, right_btn = st.columns([3, 2, 3])
 
     with left_btn:
         if st.button("Analysis Page", use_container_width=True):
