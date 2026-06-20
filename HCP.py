@@ -129,23 +129,26 @@ st.markdown("""
 }
 div.stButton > button {
     width: 100%;
-    height: 170px;
-    border-radius: 30px;
-    font-size: 30px;
-    font-weight: 800;
-    border: 1px solid rgba(255,255,255,0.45);
-    background: rgba(255,255,255,0.18);
+    height: 100px;
+    border-radius: 20px;
+
+    font-size: 24px;
+    font-weight: 700;
+
+    border: 1px solid rgba(255,255,255,0.4);
+    background: rgba(255,255,255,0.15);
     color: white;
-    backdrop-filter: blur(14px);
-    box-shadow: 0 12px 35px rgba(0,0,0,0.25);
+
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
 }
 
 div.stButton > button:hover {
-    background: rgba(255,255,255,0.30);
-    color: white;
-    border-color: rgba(255,255,255,0.75);
-    transform: translateY(-5px);
-    transition: all .3s ease;
+    background: rgba(255,255,255,0.25);
+    transform: translateY(-4px);
+    transition: 0.3s;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -265,9 +268,8 @@ if page == "Home":
     }
     </style>
     """, unsafe_allow_html=True)
-    st.markdown("### Go To")
 
-    nav1, nav2 = st.columns(2)
+    left_space, nav1, nav2, right_space = st.columns([1, 2, 2, 1])
 
     with nav1:
         if st.button("Analysis Page"):
