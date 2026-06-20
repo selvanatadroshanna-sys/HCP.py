@@ -144,15 +144,24 @@ div.stButton > button:hover {
         color: #cbd5e1;
     }
 
-    div.stButton > button {
-        background: #1e293b;
-        color: white;
-        border-color: #334155;
-    }
+div.stButton > button {
+    width: 100%;
+    height: 220px;
+    border-radius: 30px;
+    font-size: 34px;
+    font-weight: 800;
+    border: none;
+    background: linear-gradient(135deg,#2563eb,#1d4ed8);
+    color: white;
+    box-shadow: 0 12px 30px rgba(37,99,235,.25);
+}
+
+div.stButton > button:hover {
+    transform: translateY(-5px);
+    transition: all .3s ease;
 }
 </style>
 """, unsafe_allow_html=True)
-
 
 @st.cache_data
 def load_data():
@@ -250,63 +259,26 @@ if page == "Home":
         <div class="hero-content">
             <h1>Hotel Booking Analytics & Prediction</h1>
             <p>
-                This machine learning project analyzes hotel booking data to understand customer behavior,
-                discover cancellation patterns, and predict whether a booking will be canceled or not.
+                The project helps hotels improve decision-making by analyzing booking trends,
+                cancellation behavior, customer segments, lead time, room types, special requests,
+                and other important reservation features. The prediction model supports hotels in
+                identifying high-risk bookings early and reducing revenue loss.
             </p>
         </div>
     </div>
     """, unsafe_allow_html=True)
-
-    st.markdown("""
-    <div class="custom-card">
-        <div class="card-title">Project Overview</div>
-        <div class="card-text">
-            The project helps hotels improve decision-making by analyzing booking trends,
-            cancellation behavior, customer segments, lead time, room types, special requests,
-            and other important reservation features. The prediction model supports hotels in
-            identifying high-risk bookings early and reducing revenue loss.
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    col1, col2, col3 = st.columns(3)
-
-    with col1:
-        st.markdown(f"""
-        <div class="kpi-card">
-            <div class="kpi-value">{HBCP.shape[0]:,}</div>
-            <div class="kpi-title">Total Bookings</div>
-        </div>
-        """, unsafe_allow_html=True)
-
-    with col2:
-        st.markdown(f"""
-        <div class="kpi-card">
-            <div class="kpi-value">{HBCP.shape[1]}</div>
-            <div class="kpi-title">Dataset Features</div>
-        </div>
-        """, unsafe_allow_html=True)
-
-    with col3:
-        cancel_rate = HBCP["is_canceled"].mean() * 100
-        st.markdown(f"""
-        <div class="kpi-card">
-            <div class="kpi-value">{cancel_rate:.1f}%</div>
-            <div class="kpi-title">Cancellation Rate</div>
-        </div>
-        """, unsafe_allow_html=True)
 
     st.markdown("### Go To")
 
     nav1, nav2 = st.columns(2)
 
     with nav1:
-        if st.button("📊 Analysis Page"):
+        if st.button("Analysis Page"):
             st.session_state.page = "Analysis"
             st.rerun()
 
     with nav2:
-        if st.button("🤖 Prediction Page"):
+        if st.button("Prediction Page"):
             st.session_state.page = "Prediction"
             st.rerun()
 
@@ -449,7 +421,7 @@ elif page == "Analysis":
                 )
             else:
                 st.warning("Column 'reservation_status' not found in the dataset.")
-        col5= st.columns(1)
+        left, col5, right = st.columns([1, 2, 1])
         with col5:
             cancel_rate = HBCP["is_canceled"].mean() * 100
             st.markdown(f"""
@@ -645,7 +617,7 @@ elif page == "Analysis":
             title="Reserved Room Type Distribution"
         )
         st.plotly_chart(beautify_fig(fig_room), use_container_width=True)
-        col5 = st.columns(1)
+        left, col5, right = st.columns([1, 2, 1])
         with col5:
             st.markdown(f"""
             <div class="kpi-card">
