@@ -271,23 +271,23 @@ if page == "Home":
     st.markdown("""
     <style>
     div[data-testid="stHorizontalBlock"]{
-        margin-top:-240px;
-        padding-left:80px;
-        padding-right:80px;
+        margin-top:-220px;
+        padding-left:120px;
+        padding-right:120px;
         position:relative;
         z-index:999;
     }
     </style>
     """, unsafe_allow_html=True)
 
-    left_btn, center_space, right_btn = st.columns([3, 2, 3])
+    left_space, analysis_col, middle_space, prediction_col, right_space = st.columns([1.5, 4, 0.8, 4, 1.5])
 
-    with left_btn:
+    with analysis_col:
         if st.button("Analysis Page", use_container_width=True):
             st.session_state.page = "Analysis"
             st.rerun()
 
-    with right_btn:
+    with prediction_col:
         if st.button("Prediction Page", use_container_width=True):
             st.session_state.page = "Prediction"
             st.rerun()
