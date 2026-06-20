@@ -275,12 +275,12 @@ if page == "Home":
 
    left_btn, center_space, right_btn = st.columns([4, 2, 4])
 
-    with nav1:
+    with left_btn:
         if st.button("Analysis Page"):
             st.session_state.page = "Analysis"
             st.rerun()
 
-    with nav2:
+    with right_btn:
         if st.button("Prediction Page"):
             st.session_state.page = "Prediction"
             st.rerun()
