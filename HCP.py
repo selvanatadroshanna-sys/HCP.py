@@ -130,23 +130,28 @@ st.markdown("""
         color: #cbd5e1;
     }
 }
-div.stButton > button {
-    width: 80%;
-    height: 130px;
+/* HOME BUTTONS ONLY */
+div[data-testid="stHorizontalBlock"] div.stButton > button {
 
-    border-radius: 28px;
+    width: 80% !important;
+    height: 130px !important;
 
-    font-size: 70px!important;      
-    font-weight: 1000;
+    margin: auto !important;
+    display: block !important;
 
-    border: 1.5px solid rgba(255,255,255,0.35);
+    border-radius: 28px !important;
 
-    background: rgba(255,255,255,0.08);
+    font-size: 26px !important;
+    font-weight: 800 !important;
 
-    color: white;
+    border: 1.5px solid rgba(255,255,255,0.35) !important;
 
-    backdrop-filter: blur(60px);
-    -webkit-backdrop-filter: blur(60px);
+    background: rgba(255,255,255,0.08) !important;
+
+    color: white !important;
+
+    backdrop-filter: blur(60px) !important;
+    -webkit-backdrop-filter: blur(60px) !important;
 
     box-shadow:
         0 15px 40px rgba(0,0,0,0.35),
@@ -154,11 +159,25 @@ div.stButton > button {
 
     text-shadow: 0 2px 8px rgba(0,0,0,0.4);
 }
-div.stButton > button:hover {
-    background: rgba(255,255,255,0.22);
-    backdrop-filter: blur(40px);
+
+div[data-testid="stHorizontalBlock"] div.stButton > button:hover {
+    background: rgba(255,255,255,0.22) !important;
     transform: translateY(-4px);
-    transition: all 0.3s ease;
+    transition: all .3s ease;
+}
+
+
+/* CHATBOT BUTTON */
+button[kind="secondary"] {
+    width: 180px !important;
+    height: 55px !important;
+
+    border-radius: 18px !important;
+
+    font-size: 16px !important;
+    font-weight: 700 !important;
+
+    white-space: nowrap !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -279,6 +298,7 @@ if page == "Home":
     }
     </style>
     """, unsafe_allow_html=True)
+    st.markdown('<div class="home-nav-buttons">', unsafe_allow_html=True)
 
     left_space, analysis_col, middle_space, prediction_col, right_space = st.columns([1.5, 4, 0.8, 4, 1.5])
 
@@ -291,9 +311,8 @@ if page == "Home":
         if st.button("Prediction Page", use_container_width=True):
             st.session_state.page = "Prediction"
             st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
 
-    with st.expander("View Sample Data"):
-        st.dataframe(HBCP.head(), use_container_width=True)
 
 elif page == "Analysis":
     if st.button("⬅ Back to Home"):
@@ -937,20 +956,19 @@ if "api_key" not in st.session_state:
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-floating_btn = st.container()
+chat_btn = st.container()
 
-with floating_btn:
+with chat_btn:
     if st.button("Hotel Assistant", key="open_chat"):
         st.session_state.chat_open = not st.session_state.chat_open
         st.rerun()
 
-floating_btn.float("""
+chat_btn.float("""
     bottom: 40px;
     right: 40px;
-    width: 90px;
+    width: 190px;
     z-index: 99999;
 """)
-
 if st.session_state.chat_open:
     chat_container = st.container()
 
