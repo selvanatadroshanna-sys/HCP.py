@@ -136,7 +136,7 @@ div.stButton > button {
 
     border-radius: 24px;
 
-    font-size: 28px;
+    font-size: 30px;
     font-weight: 800;
 
     border: 1px solid rgba(255,255,255,0.45);
@@ -144,8 +144,8 @@ div.stButton > button {
 
     color: white;
 
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
 
     box-shadow: 0 12px 35px rgba(0,0,0,0.25);
 }
@@ -264,16 +264,16 @@ if page == "Home":
     st.markdown("""
     <style>
     div[data-testid="stHorizontalBlock"]{
-        margin-top:-180px;
-        padding-left:220px;
-        padding-right:220px;
+        margin-top:-140px;
+        padding-left:80px;
+        padding-right:80px;
         position:relative;
         z-index:999;
     }
     </style>
     """, unsafe_allow_html=True)
 
-    sp1, nav1, sp2, nav2, sp3 = st.columns([1, 4, 1, 4, 1])
+   left_btn, center_space, right_btn = st.columns([4, 2, 4])
 
     with nav1:
         if st.button("Analysis Page"):
