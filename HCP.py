@@ -57,10 +57,14 @@ st.markdown("""
     position: relative;
     z-index: 2;
     height: 100%;
-    padding: 80px;
+    padding: 70px;
     color: white;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
-
 .hero h1 {
     font-size: 58px;
     font-weight: 800;
@@ -68,12 +72,11 @@ st.markdown("""
 }
 
 .hero p {
-    font-size: 21px;
-    max-width: 800px;
+    font-size: 23px;
+    max-width: 950px;
     line-height: 1.7;
     color: #e5e7eb;
 }
-
 .custom-card, .nav-card, .kpi-card {
     background: rgba(255,255,255,0.95);
     color: #0f172a;
@@ -129,22 +132,16 @@ st.markdown("""
 }
 div.stButton > button {
     width: 100%;
-    height: 100px;
-    border-radius: 20px;
-
-    font-size: 24px;
-    font-weight: 700;
-
-    border: 1px solid rgba(255,255,255,0.4);
-    background: rgba(255,255,255,0.15);
+    height: 130px;
+    border-radius: 28px;
+    font-size: 26px;
+    font-weight: 800;
+    border: 1px solid rgba(255,255,255,0.45);
+    background: rgba(255,255,255,0.18);
     color: white;
-
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-
-    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    backdrop-filter: blur(16px);
+    box-shadow: 0 14px 40px rgba(0,0,0,0.30);
 }
-
 div.stButton > button:hover {
     background: rgba(255,255,255,0.25);
     transform: translateY(-4px);
@@ -269,7 +266,7 @@ if page == "Home":
     </style>
     """, unsafe_allow_html=True)
 
-    left_space, nav1, nav2, right_space = st.columns([1, 2, 2, 1])
+    nav1, gap, nav2 = st.columns([2, 1, 2])
 
     with nav1:
         if st.button("Analysis Page"):
