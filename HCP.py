@@ -964,72 +964,47 @@ elif page == "Prediction":
 
 st.markdown("""
 <style>
+
+/* Chat Window */
 .floating-chat {
-    position: fixed;
-    right: 28px;
-    bottom: 28px;
-    width: 360px;
-    height: 560px;
     background: #ffffff;
-    border-radius: 24px;
-    box-shadow: 0 18px 50px rgba(15, 23, 42, 0.25);
-    border: 1px solid #e5e7eb;
-    z-index: 9999;
-    padding: 18px;
 }
 
-.chat-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 800;
-    font-size: 18px;
-    color: #111827;
-    margin-bottom: 14px;
-}
-
-.chat-icon {
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #ef4444, #9333ea);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-}
-
-.chat-welcome {
-    background: #f3f4f6;
-    padding: 14px;
-    border-radius: 18px;
-    font-size: 14px;
-    color: #374151;
-    line-height: 1.5;
-    margin-bottom: 12px;
-}
-
-.chat-input-box input {
-    border-radius: 18px !important;
-}
-
-div[data-testid="stChatMessage"] {
-    background: #f9fafb;
-    border-radius: 16px;
-    padding: 8px;
-    margin-bottom: 8px;
-}
-</style>
-""", unsafe_allow_html=True)
-
-st.markdown("""
-<style>
+/* Chat Messages */
 [data-testid="stChatMessage"] {
     background: #f9fafb;
     border-radius: 15px;
     padding: 8px;
     margin-bottom: 8px;
 }
+
+/* DARK MODE */
+@media (prefers-color-scheme: dark) {
+
+    [data-testid="stChatMessage"] {
+        background: rgba(30,41,59,0.95) !important;
+        color: white !important;
+    }
+
+    [data-testid="stChatMessage"] * {
+        color: white !important;
+    }
+
+    [data-testid="stChatInput"] textarea {
+        color: white !important;
+        background: #1e293b !important;
+    }
+
+    [data-testid="stChatInput"] {
+        background: #1e293b !important;
+    }
+
+    .stMarkdown,
+    .stMarkdown * {
+        color: white !important;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -1086,7 +1061,7 @@ if st.session_state.chat_open:
         else:
             client = Groq(api_key=st.session_state.api_key)
 
-            messages_box = st.container(height=420)
+            messages_box = st.container()
 
             with messages_box:
                 for msg in st.session_state.messages:
@@ -1118,18 +1093,19 @@ if st.session_state.chat_open:
 
                 st.rerun()
 
-    chat_container.float("""
-        bottom: 100px;
-        right: 20px;
-        width: 400px;
-        height: 650px;
-        background: white;
-        border-radius: 20px;
-        padding: 15px;
-        box-shadow: 0px 8px 25px rgba(0,0,0,0.15);
-        z-index: 9999;
-        overflow-y: auto;
-    """)
+chat_container.float("""
+    bottom: 100px;
+    right: 20px;
+    width: 400px;
+    height: 650px;
+    background: rgba(15,23,42,0.98);
+    border: 1px solid #334155;
+    border-radius: 20px;
+    padding: 15px;
+    box-shadow: 0px 8px 25px rgba(0,0,0,0.15);
+    z-index: 9999;
+    overflow-y: auto;
+""")
 # if st.button('predict Is Canceled'):
 #     new_data=pd.DataFrame(columns=HBCP.columns.drop('is_canceled','reservation_status_date','reservation_status'),data=[[model,year,transmission,mileage,fueltype,tax,mpg,enginesize]])
 #     st.write('predicted price:',model.predict(new_data).round(2)[0])
