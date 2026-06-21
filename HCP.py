@@ -102,6 +102,8 @@ st.markdown("""
     width: fit-content;
     min-width: 220px;
     padding: 20px 30px;
+    margin-top: 40px;
+    margin-bottom: 30px;
 }
 
 .card-title {
@@ -127,7 +129,12 @@ st.markdown("""
     color: #64748b;
 }
 
-
+h1, h2, h3,
+[data-testid="stMarkdownContainer"] h1,
+[data-testid="stMarkdownContainer"] h2,
+[data-testid="stMarkdownContainer"] h3 {
+    color: #0f172a !important;
+}
 @media (prefers-color-scheme: dark) {
     .stApp {
         background: linear-gradient(135deg, #020617 0%, #0f172a 100%);
@@ -156,12 +163,7 @@ st.markdown("""
         color: white !important;
     }
 }
-h1, h2, h3,
-[data-testid="stMarkdownContainer"] h1,
-[data-testid="stMarkdownContainer"] h2,
-[data-testid="stMarkdownContainer"] h3 {
-    color: #0f172a !important;
-}
+
 
 /* HOME BUTTONS ONLY */
 div[data-testid="stHorizontalBlock"] div.stButton > button {
