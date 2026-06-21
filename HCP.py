@@ -399,21 +399,43 @@ elif page == "Analysis":
         options=HBCP["hotel"].unique(),
         default=HBCP["hotel"].unique()
     )
-    market_segment_filter = st.sidebar.selectbox(
+    market_segment_filter = st.sidebar.multiselect(
         "Market Segment",
-        options=HBCP["market_segment"].unique()
+        options=HBCP["market_segment"].unique(),
+        default=HBCP["market_segment"].unique()
     )
     country_filter=st.sidebar.multiselect('country',
         options=HBCP["country"].unique(),
         default=HBCP["country"].unique())
+    deposit_filter = st.sidebar.multiselect(
+    "Deposit Type",
+    options=HBCP["deposit_type"].unique(),
+    default=HBCP["deposit_type"].unique()
+    )
+    customer_filter = st.sidebar.multiselect(
+    "Customer Type",
+    options=HBCP["customer_type"].unique(),
+    default=HBCP["customer_type"].unique())
+    channel_filter = st.sidebar.multiselect(
+    "Distribution Channel",
+    options=HBCP["distribution_channel"].unique(),
+    default=HBCP["distribution_channel"].unique()
+    )
+    month_filter = st.sidebar.multiselect(
+    "Arrival Month",
+    options=HBCP["arrival_date_month"].unique(),
+    default=HBCP["arrival_date_month"].unique())
 
     HBCP = HBCP[
         (HBCP["arrival_date_year"].between(year_filter[0], year_filter[1])) &
-        (HBCP["hotel"].isin(hotel_filter))&(HBCP["market_segment"] == market_segment_filter) 
-        & HBCP['country'].isin(country_filter)
+        (HBCP["hotel"].isin(hotel_filter))&(HBCP["market_segment"] .isin(market_segment_filter)) 
+        & HBCP['country'].isin(country_filter) & (HBCP['distribution_channel'].isin(channel_filter)) 
+    & (HBCP["arrival_date_month"].isin(month_filter))
+    &(HBCP["deposit_type"].isin(deposit_filter))
+    & (HBCP["customer_type"] .isin(customer_filter))
     ]
 
-    dark_mode = True  # غيرها إلى False لو Light Mode
+    dark_mode = True  # Light Mode change to false
 
     def beautify_fig(fig):
         title_color = "#ffffff" if dark_mode else "#0f172a"
