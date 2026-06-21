@@ -45,6 +45,18 @@ st.markdown("""
     background-position: center;
     box-shadow: 0 18px 45px rgba(15, 23, 42, 0.25);
 }
+.stApp {
+    background-image:
+        linear-gradient(
+            rgba(10, 25, 60, 0.80),
+            rgba(10, 25, 60, 0.80)
+        ),
+        url("https://images.unsplash.com/photo-1566073771259-6a8506099945");
+
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
 
 .hero::before {
     content: "";
@@ -85,6 +97,12 @@ st.markdown("""
     padding: 26px;
     box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
 }
+.kpi-card {
+    display: inline-block;
+    width: fit-content;
+    min-width: 220px;
+    padding: 20px 30px;
+}
 
 .card-title {
     font-size: 25px;
@@ -123,13 +141,28 @@ st.markdown("""
     }
 
     .card-title {
-        color: white;
+        color: white !important;
     }
 
     .card-text, .kpi-title {
         color: #cbd5e1;
     }
+
+    /* Streamlit titles */
+    h1, h2, h3,
+    [data-testid="stMarkdownContainer"] h1,
+    [data-testid="stMarkdownContainer"] h2,
+    [data-testid="stMarkdownContainer"] h3 {
+        color: white !important;
+    }
 }
+h1, h2, h3,
+[data-testid="stMarkdownContainer"] h1,
+[data-testid="stMarkdownContainer"] h2,
+[data-testid="stMarkdownContainer"] h3 {
+    color: #0f172a !important;
+}
+
 /* HOME BUTTONS ONLY */
 div[data-testid="stHorizontalBlock"] div.stButton > button {
 
@@ -450,8 +483,8 @@ elif page == "Analysis":
                 )
             else:
                 st.warning("Column 'reservation_status' not found in the dataset.")
-        left, col5, right = st.columns([1, 2, 1])
-        with col5:
+
+
             cancel_rate = HBCP["is_canceled"].mean() * 100
             st.markdown(f"""
             <div class="kpi-card">
@@ -646,14 +679,13 @@ elif page == "Analysis":
             title="Reserved Room Type Distribution"
         )
         st.plotly_chart(beautify_fig(fig_room), use_container_width=True)
-        left, col5, right = st.columns([1, 2, 1])
-        with col5:
-            st.markdown(f"""
-            <div class="kpi-card">
-                <div class="kpi-value">{HBCP.shape[0]:,}</div>
-                <div class="kpi-title">Total Bookings</div>
-            </div>
-            """, unsafe_allow_html=True)
+        
+        st.markdown(f"""
+        <div class="kpi-card">
+            <div class="kpi-value">{HBCP.shape[0]:,}</div>
+            <div class="kpi-title">Total Bookings</div>
+        </div>
+        """, unsafe_allow_html=True)
 
     with tab4:
         col1, col2 = st.columns(2)
