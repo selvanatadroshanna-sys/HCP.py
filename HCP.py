@@ -404,18 +404,27 @@ elif page == "Analysis":
         & HBCP['country'].isin(country_filter)
     ]
 
-    def beautify_fig(fig):
-        fig.update_layout(
-            template="plotly_white",
-            title=dict(font=dict(size=22, color="#0f172a")),
-            plot_bgcolor="rgba(0,0,0,0)",
-            paper_bgcolor="rgba(0,0,0,0)",
-            font=dict(family="Arial", size=13, color="#334155"),
-            margin=dict(l=20, r=20, t=60, b=20)
-        )
-        fig.update_xaxes(showgrid=False, linecolor="#cbd5e1")
-        fig.update_yaxes(showgrid=True, gridcolor="#e2e8f0", linecolor="#cbd5e1")
-        return fig
+dark_mode = st.get_option("theme.base") == "dark"
+
+def beautify_fig(fig):
+    title_color = "white" if dark_mode else "#0f172a"
+    text_color = "white" if dark_mode else "#334155"
+    grid_color = "#475569" if dark_mode else "#e2e8f0"
+    template = "plotly_dark" if dark_mode else "plotly_white"
+
+    fig.update_layout(
+        template=template,
+        title=dict(font=dict(size=22, color=title_color)),
+        plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor="rgba(0,0,0,0)",
+        font=dict(family="Arial", size=13, color=text_color),
+        margin=dict(l=20, r=20, t=60, b=20)
+    )
+
+    fig.update_xaxes(showgrid=False, linecolor=grid_color)
+    fig.update_yaxes(showgrid=True, gridcolor=grid_color, linecolor=grid_color)
+
+    return fig
 
     tab1, tab2, tab3, tab4 = st.tabs([
         "Cancellation Overview",
@@ -487,13 +496,13 @@ elif page == "Analysis":
                 st.warning("Column 'reservation_status' not found in the dataset.")
 
 
-            cancel_rate = HBCP["is_canceled"].mean() * 100
-            st.markdown(f"""
-            <div class="kpi-card">
-                <div class="kpi-value">{cancel_rate:.1f}%</div>
-                <div class="kpi-title">Cancellation Rate</div>
-            </div>
-            """, unsafe_allow_html=True)
+        cancel_rate = HBCP["is_canceled"].mean() * 100
+        st.markdown(f"""
+        <div class="kpi-card">
+            <div class="kpi-value">{cancel_rate:.1f}%</div>
+            <div class="kpi-title">Cancellation Rate</div>
+        </div>
+        """, unsafe_allow_html=True)
 
     with tab2:
         col1, col2 = st.columns(2)
