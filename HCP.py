@@ -137,7 +137,16 @@ h1, h2, h3,
 }
 @media (prefers-color-scheme: dark) {
     .stApp {
-        background: linear-gradient(135deg, #020617 0%, #0f172a 100%);
+        background-image:
+            linear-gradient(
+                rgba(2, 6, 23, 0.82),
+                rgba(15, 23, 42, 0.82)
+            ),
+            url("https://images.unsplash.com/photo-1566073771259-6a8506099945");
+
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
         color: white;
     }
 
@@ -404,11 +413,11 @@ elif page == "Analysis":
         & HBCP['country'].isin(country_filter)
     ]
 
-    dark_mode = st.get_option("theme.base") == "dark"
-    
+    dark_mode = True  # غيرها إلى False لو Light Mode
+
     def beautify_fig(fig):
-        title_color = "white" if dark_mode else "#0f172a"
-        text_color = "white" if dark_mode else "#334155"
+        title_color = "#ffffff" if dark_mode else "#0f172a"
+        text_color = "#ffffff" if dark_mode else "#334155"
         grid_color = "#475569" if dark_mode else "#e2e8f0"
         template = "plotly_dark" if dark_mode else "plotly_white"
     
@@ -418,11 +427,23 @@ elif page == "Analysis":
             plot_bgcolor="rgba(0,0,0,0)",
             paper_bgcolor="rgba(0,0,0,0)",
             font=dict(family="Arial", size=13, color=text_color),
-            margin=dict(l=20, r=20, t=60, b=20)
+            margin=dict(l=20, r=20, t=80, b=40)
         )
     
-        fig.update_xaxes(showgrid=False, linecolor=grid_color)
-        fig.update_yaxes(showgrid=True, gridcolor=grid_color, linecolor=grid_color)
+        fig.update_xaxes(
+            showgrid=False,
+            linecolor=grid_color,
+            tickfont=dict(color=text_color),
+            title_font=dict(color=text_color)
+        )
+    
+        fig.update_yaxes(
+            showgrid=True,
+            gridcolor=grid_color,
+            linecolor=grid_color,
+            tickfont=dict(color=text_color),
+            title_font=dict(color=text_color)
+        )
     
         return fig
 
