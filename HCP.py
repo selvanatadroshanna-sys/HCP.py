@@ -1093,19 +1093,19 @@ if st.session_state.chat_open:
 
                 st.rerun()
 
-chat_container.float("""
-    bottom: 100px;
-    right: 20px;
-    width: 400px;
-    height: 650px;
-    background: rgba(15,23,42,0.98);
-    border: 1px solid #334155;
-    border-radius: 20px;
-    padding: 15px;
-    box-shadow: 0px 8px 25px rgba(0,0,0,0.15);
-    z-index: 9999;
-    overflow-y: auto;
-""")
+    chat_container.float("""
+        bottom: 100px;
+        right: 20px;
+        width: 400px;
+        height: 650px;
+        background: rgba(15,23,42,0.98);
+        border: 1px solid #334155;
+        border-radius: 20px;
+        padding: 15px;
+        box-shadow: 0px 8px 25px rgba(0,0,0,0.15);
+        z-index: 9999;
+        overflow-y: auto;
+    """)
 # if st.button('predict Is Canceled'):
 #     new_data=pd.DataFrame(columns=HBCP.columns.drop('is_canceled','reservation_status_date','reservation_status'),data=[[model,year,transmission,mileage,fueltype,tax,mpg,enginesize]])
 #     st.write('predicted price:',model.predict(new_data).round(2)[0])
