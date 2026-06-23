@@ -796,7 +796,7 @@ elif page == "Analysis":
         col3, col4 = st.columns(2)
 
         with col3:
-            HCP['adr_log'] = np.log1p(HCP['adr'])
+            HBCP['adr_log'] = np.log1p(HBCP['adr'])
             fig_adr_box = px.box(
                 HBCP,
                 x="adr_log",
