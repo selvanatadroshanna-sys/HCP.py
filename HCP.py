@@ -796,9 +796,10 @@ elif page == "Analysis":
         col3, col4 = st.columns(2)
 
         with col3:
+            HCP['adr_log'] = np.log1p(HCP['adr'])
             fig_adr_box = px.box(
                 HBCP,
-                x="adr",
+                x="adr_log",
                 y="is_canceled_label",
                 title="ADR by Cancellation Status"
             )
