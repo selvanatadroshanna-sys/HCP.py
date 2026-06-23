@@ -805,21 +805,13 @@ elif page == "Analysis":
             st.plotly_chart(beautify_fig(fig_adr_box), use_container_width=True)
 
         with col4:
-            adr_cancel = (
-                HBCP.groupby("is_canceled_label")["adr"]
-                .mean()
-                .reset_index()
-                .round(2)
+            fig_lead_cancel = px.box(
+                HBCP,
+                x='is_canceled_label',
+                y='lead_time',
+                title='Lead Time vs Cancellation'
             )
-
-            fig_adr_bar = px.bar(
-                adr_cancel,
-                x="is_canceled_label",
-                y="adr",
-                text="adr",
-                title="Average ADR by Cancellation Status"
-            )
-            st.plotly_chart(beautify_fig(fig_adr_bar), use_container_width=True)
+            st.plotly_chart(beautify_fig(fig_lead_cancel), use_container_width=True)
 
     with st.expander("View Filtered Data"):
         st.dataframe(HBCP.head(100), use_container_width=True)
